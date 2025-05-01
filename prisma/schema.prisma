@@ -1,0 +1,172 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ColorEnum {
+  RED
+  BLUE
+  GREEN
+}
+
+enum AdType {
+  SELL
+  BUY
+  EXCHANGE
+}
+
+model User {
+  id           BigInt          @id @default(autoincrement())
+  fullname     String
+  email        String          @unique
+  phone        String          @unique
+  password     String
+  location     String
+  image        String
+  role         Role            @default(USER)
+  regionId     BigInt
+  registeredAt DateTime        @default(now())
+  region       Region          @relation(fields: [regionId], references: [id])
+  elons        Elon[]
+  comments     Comment[]
+  orders       Order[]
+  likes        Like[]
+  views        View[]
+  sentMessages Message[]       @relation("SentMessages")
+  buyerChats   RealtimeChat[]  @relation("BuyerChats")
+  sellerChats  RealtimeChat[]  @relation("SellerChats")
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+model Region {
+  id        BigInt   @id @default(autoincrement())
+  name      String   @unique
+  users     User[]
+  elons     Elon[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        BigInt   @id @default(autoincrement())
+  name      String   @unique
+  image     String
+  elons     Elon[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Color {
+  id        BigInt     @id @default(autoincrement())
+  which     ColorEnum  @unique
+  elons     Elon[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Elon {
+  id          BigInt         @id @default(autoincrement())
+  name        String
+  description String
+  type        AdType
+  price       Decimal
+  rating      Decimal        @default(0.0)
+  image       String
+  discount    Int
+  userId      BigInt
+  categoryId  BigInt
+  colorId     BigInt
+  regionId    BigInt
+  user        User           @relation(fields: [userId], references: [id])
+  category    Category       @relation(fields: [categoryId], references: [id])
+  color       Color          @relation(fields: [colorId], references: [id])
+  region      Region         @relation(fields: [regionId], references: [id])
+  comments    Comment[]
+  likes       Like[]
+  views       View[]
+  chats       RealtimeChat[]
+  orders      Order[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Comment {
+  id         BigInt   @id @default(autoincrement())
+  text       String
+  stars      Decimal
+  userId     BigInt
+  elonId     BigInt
+  user       User     @relation(fields: [userId], references: [id])
+  elon       Elon     @relation(fields: [elonId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Order {
+  id         BigInt     @id @default(autoincrement())
+  userId     BigInt
+  elonId     BigInt
+  quantity   Int
+  color      ColorEnum
+  user       User       @relation(fields: [userId], references: [id])
+  elon       Elon       @relation(fields: [elonId], references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Like {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt
+  elonId    BigInt
+  user      User     @relation(fields: [userId], references: [id])
+  elon      Elon     @relation(fields: [elonId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, elonId])
+}
+
+model View {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt?
+  elonId    BigInt
+  viewedAt  DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  elon      Elon     @relation(fields: [elonId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RealtimeChat {
+  id         BigInt       @id @default(autoincrement())
+  elonId     BigInt
+  buyerId    BigInt
+  sellerId   BigInt
+  elon       Elon         @relation(fields: [elonId], references: [id])
+  buyer      User         @relation("BuyerChats", fields: [buyerId], references: [id])
+  seller     User         @relation("SellerChats", fields: [sellerId], references: [id])
+  messages   Message[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model Message {
+  id         BigInt       @id @default(autoincrement())
+  chatId     BigInt
+  senderId   BigInt
+  content    String
+  sentAt     DateTime     @default(now())
+  chat       RealtimeChat @relation(fields: [chatId], references: [id])
+  sender     User         @relation("SentMessages", fields: [senderId], references: [id])
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
