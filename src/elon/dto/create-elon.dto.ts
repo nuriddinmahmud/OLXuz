@@ -19,14 +19,6 @@ export class CreateElonDto {
   @IsNumber()
   price: number;
 
-  @ApiProperty({ example: 4.8 })
-  @IsNumber()
-  star: number;
-
-  @ApiProperty({ example: 'https://image.com/phone.jpg' })
-  @IsString()
-  image: string;
-
   @ApiProperty({ example: 10 })
   @IsNumber()
   discount: number;
@@ -46,4 +38,7 @@ export class CreateElonDto {
   @ApiProperty({ example: 4 })
   @IsNumber()
   colorId: number;
+
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  image: any; 
 }

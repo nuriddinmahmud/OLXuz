@@ -1,14 +1,48 @@
-import { IsEmail, IsEnum, IsString, IsDateString, IsNumber } from 'class-validator';
-import { Role } from '../common/enums/roles.enum';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsDateString,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 
 export class RegisterDto {
-  @IsString() fullname: string;
-  @IsEmail() email: string;
-  @IsString() password: string;
-  @IsString() phone: string;
-  @IsString() location: string;
-  @IsString() image: string;
-  @IsEnum(Role) role: Role;
-  @IsNumber() regionId: number;
-  @IsDateString() year: string; 
+  @ApiProperty()
+  @IsString()
+  fullname: string;
+
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+
+  @ApiProperty()
+  @IsString()
+  phone: string;
+
+  @ApiProperty()
+  @IsString()
+  location: string;
+
+  @ApiProperty()
+  @IsString()
+  image: string;
+
+  @ApiProperty({ enum: Role, default: Role.USER })
+  @IsOptional()
+  role?: Role;
+
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  regionId: number;
+
+  @ApiProperty({ example: '2002-08-16' })
+  @IsDateString()
+  year: string;
 }

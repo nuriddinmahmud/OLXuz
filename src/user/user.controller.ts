@@ -1,10 +1,23 @@
-import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('User')
+@ApiBearerAuth() 
+@UseGuards(AuthGuard('jwt')) 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -32,5 +45,10 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(BigInt(id));
+  }
+
+  @Get('me')
+  getProfile(@Req() req) {
+    return req.user;
   }
 }

@@ -31,6 +31,9 @@ model User {
   fullname     String
   email        String   @unique
   password     String
+  isVerified   Boolean  @default(false)
+  otpCode      String?
+  otpExpires   DateTime?
   phone        String
   location     String
   image        String

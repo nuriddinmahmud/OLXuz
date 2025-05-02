@@ -23,13 +23,14 @@ async function bootstrap() {
     .setTitle('OLX.uz Backend API')
     .setDescription('Karoche bu proyekt jaydaricha OLX.uz ga o`xshab qoldi')
     .setVersion('1.0')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('olx', app, document); 
 
   
-  const port = process.env.PORT ?? 3000;
+  const port = process.env.PORT ?? 7000;
   await app.listen(port);
   console.log(`Server running at http://localhost:${port}`);
 }
