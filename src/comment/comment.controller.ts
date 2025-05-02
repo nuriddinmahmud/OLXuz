@@ -2,14 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('comment')
+@ApiTags('Comment')
+@Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create(createCommentDto);
+  create(@Body() dto: CreateCommentDto) {
+    return this.commentService.create(dto);
   }
 
   @Get()
@@ -19,16 +21,16 @@ export class CommentController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+    return this.commentService.findOne(BigInt(id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
+  update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {
+    return this.commentService.update(BigInt(id), dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+    return this.commentService.remove(BigInt(id));
   }
 }
