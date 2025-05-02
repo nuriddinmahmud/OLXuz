@@ -2,14 +2,26 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateRegionDto } from './dto/create-region.dto';
 import { UpdateRegionDto } from './dto/update-region.dto';
+import {  BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class RegionService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateRegionDto) {
-    return this.prisma.region.create({ data: dto });
+  async create(dto: CreateRegionDto) {
+    const existing = await this.prisma.region.findUnique({
+      where: { name: dto.name },
+    });
+  
+    if (existing) {
+      throw new BadRequestException('Bu region allaqachon mavjud');
+    }
+  
+    return this.prisma.region.create({
+      data: { name: dto.name },
+    });
   }
+  
 
   findAll() {
     return this.prisma.region.findMany();

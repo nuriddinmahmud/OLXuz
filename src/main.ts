@@ -30,7 +30,7 @@ async function bootstrap() {
   SwaggerModule.setup('olx', app, document); 
 
   
-  const port = process.env.PORT ?? 7000;
+  const port = process.env.PORT ?? 3002;
   await app.listen(port);
   console.log(`Server running at http://localhost:${port}`);
 }
