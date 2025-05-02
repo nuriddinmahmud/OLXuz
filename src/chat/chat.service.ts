@@ -1,26 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Injectable()
 export class ChatService {
-  create(createChatDto: CreateChatDto) {
-    return 'This action adds a new chat';
+  constructor(private readonly prisma: PrismaService) {}
+
+  create(dto: CreateChatDto) {
+    return this.prisma.realtimeChat.create({
+      data: {
+        elonId: BigInt(dto.elonId),
+        buyerId: BigInt(dto.buyerId),
+        sellerId: BigInt(dto.sellerId),
+      },
+    });
   }
 
   findAll() {
-    return `This action returns all chat`;
+    return this.prisma.realtimeChat.findMany({
+      include: { elon: true, buyer: true, seller: true, messages: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
+  async findOne(id: bigint) {
+    const chat = await this.prisma.realtimeChat.findUnique({
+      where: { id },
+      include: { elon: true, buyer: true, seller: true, messages: true },
+    });
+    if (!chat) throw new NotFoundException('Chat not found');
+    return chat;
   }
 
-  update(id: number, updateChatDto: UpdateChatDto) {
-    return `This action updates a #${id} chat`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+  remove(id: bigint) {
+    return this.prisma.realtimeChat.delete({ where: { id } });
   }
 }
