@@ -18,6 +18,7 @@ export class UserService {
         phone: dto.phone,
         location: dto.location,
         image: dto.image,
+        year: new Date(dto.year),
         regionId: BigInt(dto.regionId),
       },
     });

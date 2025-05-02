@@ -1,6 +1,8 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
+
 
 datasource db {
   provider = "postgresql"
@@ -25,28 +27,31 @@ enum AdType {
 }
 
 model User {
-  id           BigInt          @id @default(autoincrement())
+  id           BigInt   @id @default(autoincrement())
   fullname     String
-  email        String          @unique
-  phone        String          @unique
+  email        String   @unique
   password     String
+  phone        String
   location     String
   image        String
-  role         Role            @default(USER)
+  role         Role     @default(USER)
   regionId     BigInt
-  registeredAt DateTime        @default(now())
-  region       Region          @relation(fields: [regionId], references: [id])
+  year         DateTime          
+  registeredAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  region       Region   @relation(fields: [regionId], references: [id])
   elons        Elon[]
   comments     Comment[]
   orders       Order[]
   likes        Like[]
   views        View[]
-  sentMessages Message[]       @relation("SentMessages")
-  buyerChats   RealtimeChat[]  @relation("BuyerChats")
-  sellerChats  RealtimeChat[]  @relation("SellerChats")
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  sentMessages  Message[]     @relation("SentMessages")
+  buyerChats    RealtimeChat[] @relation("BuyerChats")
+  sellerChats   RealtimeChat[] @relation("SellerChats")
 }
+
 
 model Region {
   id        BigInt   @id @default(autoincrement())

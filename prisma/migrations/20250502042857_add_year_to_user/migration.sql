@@ -12,12 +12,13 @@ CREATE TABLE "User" (
     "id" BIGSERIAL NOT NULL,
     "fullname" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "phone" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "location" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
     "regionId" BIGINT NOT NULL,
+    "year" TIMESTAMP(3) NOT NULL,
     "registeredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -152,9 +153,6 @@ CREATE TABLE "Message" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Region_name_key" ON "Region"("name");
