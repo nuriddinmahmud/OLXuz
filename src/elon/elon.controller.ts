@@ -2,14 +2,16 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ElonService } from './elon.service';
 import { CreateElonDto } from './dto/create-elon.dto';
 import { UpdateElonDto } from './dto/update-elon.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('elon')
+@ApiTags('Elon')
+@Controller('elons')
 export class ElonController {
   constructor(private readonly elonService: ElonService) {}
 
   @Post()
-  create(@Body() createElonDto: CreateElonDto) {
-    return this.elonService.create(createElonDto);
+  create(@Body() dto: CreateElonDto) {
+    return this.elonService.create(dto);
   }
 
   @Get()
@@ -19,16 +21,16 @@ export class ElonController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.elonService.findOne(+id);
+    return this.elonService.findOne(BigInt(id));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateElonDto: UpdateElonDto) {
-    return this.elonService.update(+id, updateElonDto);
+  update(@Param('id') id: string, @Body() dto: UpdateElonDto) {
+    return this.elonService.update(BigInt(id), dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.elonService.remove(+id);
+    return this.elonService.remove(BigInt(id));
   }
 }
