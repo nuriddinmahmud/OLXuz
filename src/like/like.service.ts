@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
 
 @Injectable()
 export class LikeService {
-  create(createLikeDto: CreateLikeDto) {
-    return 'This action adds a new like';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(dto: CreateLikeDto) {
+    return this.prisma.like.create({
+      data: {
+        userId: BigInt(dto.userId),
+        elonId: BigInt(dto.elonId),
+      },
+    });
   }
 
   findAll() {
-    return `This action returns all like`;
+    return this.prisma.like.findMany({
+      include: { user: true, elon: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} like`;
+  async findOne(id: bigint) {
+    const like = await this.prisma.like.findUnique({ where: { id } });
+    if (!like) throw new NotFoundException('Like not found');
+    return like;
   }
 
-  update(id: number, updateLikeDto: UpdateLikeDto) {
-    return `This action updates a #${id} like`;
+  remove(id: bigint) {
+    return this.prisma.like.delete({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} like`;
+  async removeByUserAndElon(userId: number, elonId: number) {
+    const like = await this.prisma.like.findUnique({
+      where: {
+        userId_elonId: {
+          userId: BigInt(userId),
+          elonId: BigInt(elonId),
+        },
+      },
+    });
+    if (!like) throw new NotFoundException('Like not found');
+    return this.prisma.like.delete({
+      where: { id: like.id },
+    });
   }
 }

@@ -1,15 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('like')
+@ApiTags('Like')
+@Controller('likes')
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Post()
-  create(@Body() createLikeDto: CreateLikeDto) {
-    return this.likeService.create(createLikeDto);
+  create(@Body() dto: CreateLikeDto) {
+    return this.likeService.create(dto);
   }
 
   @Get()
@@ -19,16 +20,19 @@ export class LikeController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.likeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLikeDto: UpdateLikeDto) {
-    return this.likeService.update(+id, updateLikeDto);
+    return this.likeService.findOne(BigInt(id));
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.likeService.remove(+id);
+    return this.likeService.remove(BigInt(id));
+  }
+
+  @Delete('remove/by-user/:userId/:elonId')
+  removeByUserAndElon(
+    @Param('userId') userId: string,
+    @Param('elonId') elonId: string,
+  ) {
+    return this.likeService.removeByUserAndElon(+userId, +elonId);
   }
 }
